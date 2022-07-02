@@ -15,8 +15,14 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+
 	implementation 'com.alibaba.cloud:spring-cloud-alibaba-dependencies:2021.1'
 	implementation 'com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-discovery:2021.1'
+
+	// openfeign 和 loadbalancer 需要一起引入
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+	implementation 'org.springframework.cloud:spring-cloud-starter-loadbalancer'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
