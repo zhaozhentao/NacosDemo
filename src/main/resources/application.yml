@@ -1,7 +1,9 @@
 spring:
   application:
-    name: user-service
+    name: demo-service
   cloud:
     nacos:
       discovery:
         server-addr: 47.92.205.201:8848
+        # ??????nacos????
+        ephemeral: false
