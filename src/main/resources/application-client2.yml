@@ -1,2 +1,8 @@
 server:
   port: 8081
+
+spring:
+  cloud:
+    nacos:
+      discovery:
+        cluster-name: foshan
