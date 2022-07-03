@@ -6,7 +6,7 @@ plugins {
 
 group = 'nacos'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '18'
+sourceCompatibility = '8'
 
 repositories {
 	mavenCentral()
@@ -18,6 +18,11 @@ dependencies {
 
 	implementation 'com.alibaba.cloud:spring-cloud-alibaba-dependencies:2021.0.1.0'
 	implementation 'com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-discovery:2021.0.1.0'
+
+	// 分布式事务
+	implementation 'com.alibaba.cloud:spring-cloud-starter-alibaba-seata:2021.0.1.0'
+
+	implementation 'com.alibaba.cloud:spring-cloud-starter-alibaba-sentinel:2021.0.1.0'
 
 	// 配置中心
 	implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
