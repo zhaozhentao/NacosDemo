@@ -5,3 +5,6 @@ spring:
     nacos:
       discovery:
         server-addr: 47.92.205.201:8848
+    loadbalancer:
+      nacos:
+        enabled: true
