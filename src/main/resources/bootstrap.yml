@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: test
+  cloud:
+    nacos:
+      config:
+        file-extension: yml
+        server-addr: 47.92.205.201:8848

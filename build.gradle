@@ -19,6 +19,10 @@ dependencies {
 	implementation 'com.alibaba.cloud:spring-cloud-alibaba-dependencies:2021.0.1.0'
 	implementation 'com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-discovery:2021.0.1.0'
 
+	// 配置中心
+	implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
+	implementation 'com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-config:2021.0.1.0'
+
 	// openfeign 和 loadbalancer 需要一起引入
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 	implementation 'org.springframework.cloud:spring-cloud-starter-loadbalancer'
