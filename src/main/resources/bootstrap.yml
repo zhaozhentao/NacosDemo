@@ -6,3 +6,4 @@ spring:
       config:
         file-extension: yml
         server-addr: 47.92.205.201:8848
+        namespace: 4a68bd01-378a-4c1d-8a37-9dd7797f81bd
