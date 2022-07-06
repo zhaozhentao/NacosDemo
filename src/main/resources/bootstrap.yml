@@ -5,7 +5,13 @@ spring:
     nacos:
       config:
         file-extension: yml
-        server-addr: 47.92.205.201:8848
+        server-addr: 10.10.18.39:8848
         namespace: 4a68bd01-378a-4c1d-8a37-9dd7797f81bd
       discovery:
         namespace: 4a68bd01-378a-4c1d-8a37-9dd7797f81bd
+seata:
+  service:
+    vgroup-mapping:
+      test-seata-service-group: default
+    grouplist:
+      default: 10.10.18.39:8091
