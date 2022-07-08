@@ -1,12 +1,14 @@
 package nacos.demo.controller;
 
-import nacos.demo.feign.UserClient;
+import nacos.demo.feigns.UserClient;
+import nacos.demo.model.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.Date;
 
 @RestController
 public class Controller {
@@ -19,7 +21,8 @@ public class Controller {
 
     @GetMapping("/user/{id}")
     public Object show(@PathVariable("id") int id) {
-        System.out.println("调用了");
+        User user = new User("旺财", new Date());
+        user.insert();
         return text;
     }
 
