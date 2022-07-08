@@ -6,6 +6,7 @@ import nacos.demo.model.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -21,24 +22,20 @@ public class Controller {
     String text;
 
     @GlobalTransactional
-    @GetMapping("/user/{id}")
-    public Object show(@PathVariable("id") int id) {
+    @GetMapping("/user")
+    public Object show(@RequestParam("rollback") boolean rollback) {
         User user = new User("旺财", new Date());
         user.insert();
 
-        if (true) {
-            throw new RuntimeException("我就是要报错 怎么啦");
-        }
-
+        if (rollback) throw new RuntimeException("我要回滚啦");
         return text;
     }
 
     @GlobalTransactional
     @GetMapping("/test")
-    public Object test() {
+    public Object test(@RequestParam("rollback") boolean rollback) {
         User user = new User("test", new Date());
         user.insert();
-
-        return client.getUserById(1);
+        return client.getUserById(rollback);
     }
 }
