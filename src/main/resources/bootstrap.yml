@@ -1,6 +1,12 @@
 spring:
   application:
     name: test
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://10.10.22.45:3306/mpgs?&allowMultiQueries=true&autoReconnect=true&useUnicode=true&characterEncoding=utf-8&useSSL=false
+    username: mpgs
+    password: Mpgs@_123
   cloud:
     nacos:
       config:
@@ -9,6 +15,7 @@ spring:
         namespace: 4a68bd01-378a-4c1d-8a37-9dd7797f81bd
       discovery:
         namespace: 4a68bd01-378a-4c1d-8a37-9dd7797f81bd
+
 seata:
   service:
     vgroup-mapping:
