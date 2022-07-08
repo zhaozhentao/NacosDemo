@@ -19,8 +19,9 @@ dependencies {
 	implementation 'com.alibaba.cloud:spring-cloud-alibaba-dependencies:2021.0.1.0'
 	implementation 'com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-discovery:2021.0.1.0'
 
-	// 分布式事务
+	// 分布式事务,回滚时间字段需要的序列化工具
 	implementation 'com.alibaba.cloud:spring-cloud-starter-alibaba-seata:2021.0.1.0'
+	implementation 'de.javakaffee:kryo-serializers:0.42'
 
 	implementation 'com.alibaba.cloud:spring-cloud-starter-alibaba-sentinel:2021.0.1.0'
 

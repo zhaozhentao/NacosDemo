@@ -22,3 +22,6 @@ seata:
       test-seata-service-group: default
     grouplist:
       default: 10.10.18.39:8091
+  client:
+    undo:
+      log-serialization: kryo
