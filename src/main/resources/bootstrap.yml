@@ -9,11 +9,12 @@ spring:
     password: Mpgs@_123
   cloud:
     nacos:
+      discovery:
+        server-addr: http://10.10.44.55:8861,http://10.10.44.55:8861,http://10.10.44.55:8861
+        namespace: 4a68bd01-378a-4c1d-8a37-9dd7797f81bd
       config:
         file-extension: yml
-        server-addr: 10.10.18.39:8848
-        namespace: 4a68bd01-378a-4c1d-8a37-9dd7797f81bd
-      discovery:
+        server-addr: ${spring.cloud.nacos.discovery.server-addr}
         namespace: 4a68bd01-378a-4c1d-8a37-9dd7797f81bd
 
 seata:
