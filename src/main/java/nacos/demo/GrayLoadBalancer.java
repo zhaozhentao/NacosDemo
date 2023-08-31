@@ -40,27 +40,21 @@ public class GrayLoadBalancer implements ReactorServiceInstanceLoadBalancer {
         String serviceId,
         Registration registration
     ) {
-        this(serviceInstanceListSupplierProvider, serviceId, (new Random()).nextInt(1000));
-
-        this.registration = registration;
-    }
-
-    public GrayLoadBalancer(ObjectProvider<ServiceInstanceListSupplier> serviceInstanceListSupplierProvider, String serviceId, int seedPosition) {
-        this.serviceId = serviceId;
         this.serviceInstanceListSupplierProvider = serviceInstanceListSupplierProvider;
-        this.position = new AtomicInteger(seedPosition);
+        this.serviceId = serviceId;
+        this.registration = registration;
+        this.position = new AtomicInteger((new Random()).nextInt(1000));
     }
 
     public Mono<Response<ServiceInstance>> choose(Request request) {
         ServiceInstanceListSupplier supplier = this.serviceInstanceListSupplierProvider.getIfAvailable(NoopServiceInstanceListSupplier::new);
 
-        return supplier.get(request).next().map((serviceInstances) -> {
-            return this.processInstanceResponse(supplier, serviceInstances);
-        });
+        return supplier.get(request).next().map((serviceInstances) -> this.processInstanceResponse(supplier, serviceInstances));
     }
 
     private Response<ServiceInstance> processInstanceResponse(ServiceInstanceListSupplier supplier, List<ServiceInstance> serviceInstances) {
         Response<ServiceInstance> serviceInstanceResponse = this.getInstanceResponse(serviceInstances);
+
         if (supplier instanceof SelectedInstanceCallback && serviceInstanceResponse.hasServer()) {
             ((SelectedInstanceCallback) supplier).selectedServiceInstance(serviceInstanceResponse.getServer());
         }
@@ -77,10 +71,11 @@ public class GrayLoadBalancer implements ReactorServiceInstanceLoadBalancer {
             return new EmptyResponse();
         }
 
-        List<ServiceInstance> sameEnvInstances = instances.stream().filter(i -> {
-            String who = i.getMetadata().get("who");
-            return StringUtils.equals(who, registration.getMetadata().get("who"));
-        }).collect(Collectors.toList());
+        String localMetadata = registration.getMetadata().get("who");
+
+        List<ServiceInstance> sameEnvInstances = instances.stream()
+            .filter(i -> StringUtils.equals(i.getMetadata().get("who"), localMetadata))
+            .collect(Collectors.toList());
 
         int pos = this.position.incrementAndGet() & Integer.MAX_VALUE;
 
