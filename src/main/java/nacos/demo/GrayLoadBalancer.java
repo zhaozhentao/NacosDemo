@@ -1,5 +1,6 @@
 package nacos.demo;
 
+import com.alibaba.cloud.commons.lang.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.cloud.client.ServiceInstance;
@@ -12,11 +13,13 @@ import org.springframework.cloud.loadbalancer.core.NoopServiceInstanceListSuppli
 import org.springframework.cloud.loadbalancer.core.ReactorServiceInstanceLoadBalancer;
 import org.springframework.cloud.loadbalancer.core.SelectedInstanceCallback;
 import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
+import org.springframework.util.CollectionUtils;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * 灰度发布负载均衡器
@@ -72,13 +75,18 @@ public class GrayLoadBalancer implements ReactorServiceInstanceLoadBalancer {
             }
 
             return new EmptyResponse();
-        } else {
-            int pos = this.position.incrementAndGet() & Integer.MAX_VALUE;
-            ServiceInstance instance = instances.get(pos % instances.size());
-
-            log.info("got {}", instance.getMetadata());
-
-            return new DefaultResponse(instance);
         }
+
+        List<ServiceInstance> sameEnvInstances = instances.stream().filter(i -> {
+            String who = i.getMetadata().get("who");
+            return StringUtils.equals(who, registration.getMetadata().get("who"));
+        }).collect(Collectors.toList());
+
+        int pos = this.position.incrementAndGet() & Integer.MAX_VALUE;
+
+        ServiceInstance instance = CollectionUtils.isEmpty(sameEnvInstances) ? instances.get(pos % instances.size()) :
+            sameEnvInstances.get(pos % sameEnvInstances.size());
+
+        return new DefaultResponse(instance);
     }
 }

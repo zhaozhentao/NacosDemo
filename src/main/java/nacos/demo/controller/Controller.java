@@ -2,7 +2,6 @@ package nacos.demo.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import nacos.demo.feigns.UserClient;
-import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,12 +21,12 @@ public class Controller {
     @GetMapping("/qw")
     public Object test() {
         String result = userClient.getUserById(false);
-
-        return serviceInstance;
+        return result;
     }
 
     @GetMapping("/user")
     public String user() {
+        log.info("here");
         return "hao";
     }
 }

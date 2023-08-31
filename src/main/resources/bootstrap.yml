@@ -11,8 +11,6 @@ spring:
     nacos:
       discovery:
         server-addr: http://10.10.44.55:8861,http://10.10.44.55:8861,http://10.10.44.55:8861
-        metadata:
-          whoami: zhaozhentao
       config:
         file-extension: yml
         server-addr: ${spring.cloud.nacos.discovery.server-addr}

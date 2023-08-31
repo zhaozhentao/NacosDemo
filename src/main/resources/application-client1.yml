@@ -1,2 +1,9 @@
 server:
   port: 8080
+
+spring:
+  cloud:
+    nacos:
+      discovery:
+        metadata:
+          who: zhaozhentao
