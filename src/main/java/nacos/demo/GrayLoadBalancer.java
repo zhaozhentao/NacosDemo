@@ -1,13 +1,13 @@
 package nacos.demo;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.DefaultResponse;
 import org.springframework.cloud.client.loadbalancer.EmptyResponse;
 import org.springframework.cloud.client.loadbalancer.Request;
 import org.springframework.cloud.client.loadbalancer.Response;
+import org.springframework.cloud.client.serviceregistry.Registration;
 import org.springframework.cloud.loadbalancer.core.NoopServiceInstanceListSupplier;
 import org.springframework.cloud.loadbalancer.core.ReactorServiceInstanceLoadBalancer;
 import org.springframework.cloud.loadbalancer.core.SelectedInstanceCallback;
@@ -21,9 +21,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * 灰度发布负载均衡器
  */
+@Slf4j
 public class GrayLoadBalancer implements ReactorServiceInstanceLoadBalancer {
-
-    private static final Log log = LogFactory.getLog(GrayLoadBalancer.class);
 
     final AtomicInteger position;
 
@@ -31,8 +30,16 @@ public class GrayLoadBalancer implements ReactorServiceInstanceLoadBalancer {
 
     ObjectProvider<ServiceInstanceListSupplier> serviceInstanceListSupplierProvider;
 
-    public GrayLoadBalancer(ObjectProvider<ServiceInstanceListSupplier> serviceInstanceListSupplierProvider, String serviceId) {
+    Registration registration;
+
+    public GrayLoadBalancer(
+        ObjectProvider<ServiceInstanceListSupplier> serviceInstanceListSupplierProvider,
+        String serviceId,
+        Registration registration
+    ) {
         this(serviceInstanceListSupplierProvider, serviceId, (new Random()).nextInt(1000));
+
+        this.registration = registration;
     }
 
     public GrayLoadBalancer(ObjectProvider<ServiceInstanceListSupplier> serviceInstanceListSupplierProvider, String serviceId, int seedPosition) {
@@ -43,6 +50,7 @@ public class GrayLoadBalancer implements ReactorServiceInstanceLoadBalancer {
 
     public Mono<Response<ServiceInstance>> choose(Request request) {
         ServiceInstanceListSupplier supplier = this.serviceInstanceListSupplierProvider.getIfAvailable(NoopServiceInstanceListSupplier::new);
+
         return supplier.get(request).next().map((serviceInstances) -> {
             return this.processInstanceResponse(supplier, serviceInstances);
         });
@@ -51,7 +59,7 @@ public class GrayLoadBalancer implements ReactorServiceInstanceLoadBalancer {
     private Response<ServiceInstance> processInstanceResponse(ServiceInstanceListSupplier supplier, List<ServiceInstance> serviceInstances) {
         Response<ServiceInstance> serviceInstanceResponse = this.getInstanceResponse(serviceInstances);
         if (supplier instanceof SelectedInstanceCallback && serviceInstanceResponse.hasServer()) {
-            ((SelectedInstanceCallback) supplier).selectedServiceInstance((ServiceInstance) serviceInstanceResponse.getServer());
+            ((SelectedInstanceCallback) supplier).selectedServiceInstance(serviceInstanceResponse.getServer());
         }
 
         return serviceInstanceResponse;
@@ -66,7 +74,10 @@ public class GrayLoadBalancer implements ReactorServiceInstanceLoadBalancer {
             return new EmptyResponse();
         } else {
             int pos = this.position.incrementAndGet() & Integer.MAX_VALUE;
-            ServiceInstance instance = (ServiceInstance) instances.get(pos % instances.size());
+            ServiceInstance instance = instances.get(pos % instances.size());
+
+            log.info("got {}", instance.getMetadata());
+
             return new DefaultResponse(instance);
         }
     }

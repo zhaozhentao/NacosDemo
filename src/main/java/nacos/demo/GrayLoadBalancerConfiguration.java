@@ -1,20 +1,29 @@
 package nacos.demo;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.cloud.client.ConditionalOnDiscoveryEnabled;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.serviceregistry.Registration;
 import org.springframework.cloud.loadbalancer.core.ReactorLoadBalancer;
 import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
 import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 
-@ConditionalOnDiscoveryEnabled
+@Slf4j
 public class GrayLoadBalancerConfiguration {
+
     @Bean
-    @ConditionalOnMissingBean
-    public ReactorLoadBalancer<ServiceInstance> reactorServiceInstanceLoadBalancer(Environment environment, LoadBalancerClientFactory loadBalancerClientFactory) {
+    public ReactorLoadBalancer<ServiceInstance> reactorServiceInstanceLoadBalancer(
+        Environment environment,
+        LoadBalancerClientFactory loadBalancerClientFactory,
+        Registration registration
+    ) {
         String name = environment.getProperty(LoadBalancerClientFactory.PROPERTY_NAME);
-        return new GrayLoadBalancer(loadBalancerClientFactory.getLazyProvider(name, ServiceInstanceListSupplier.class), name);
+
+        return new GrayLoadBalancer(
+            loadBalancerClientFactory.getLazyProvider(name, ServiceInstanceListSupplier.class),
+            name,
+            registration
+        );
     }
 }
