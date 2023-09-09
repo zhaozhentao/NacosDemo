@@ -1,16 +1,15 @@
 package nacos.demo.controller;
 
-import com.alibaba.nacos.api.config.ConfigService;
 import com.alibaba.nacos.api.exception.NacosException;
-import com.alibaba.nacos.api.naming.NamingFactory;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.Instance;
-import com.alibaba.nacos.client.naming.NacosNamingService;
+import com.alibaba.nacos.api.naming.pojo.ListView;
 import lombok.extern.slf4j.Slf4j;
 import nacos.demo.feigns.UserClient;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -29,16 +28,20 @@ public class Controller {
     @Resource
     DiscoveryClient discoveryClient;
 
+    @Resource
+    NamingService namingService;
+
     @GetMapping("service")
-    public List<String> service() {
-        return discoveryClient.getServices();
+    public ListView<String> service(
+        @RequestParam("page") int page,
+        @RequestParam("perPage") int perPage
+    ) throws NacosException {
+        return namingService.getServicesOfServer(page, perPage);
     }
 
     @GetMapping("nodes")
-    public List<Instance> nodes() throws NacosException {
-        NamingService namingService1 = NamingFactory.createNamingService("console.nacos.io");
-
-        return namingService1.getAllInstances("zzt");
+    public List<Instance> nodes(@RequestParam("serviceName") String serviceName) throws NacosException {
+        return namingService.getAllInstances(serviceName);
     }
 
     @GetMapping("test")
