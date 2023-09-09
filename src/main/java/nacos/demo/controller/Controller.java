@@ -5,7 +5,6 @@ import cn.hutool.http.Method;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.Instance;
-import com.alibaba.nacos.api.naming.pojo.ListView;
 import lombok.extern.slf4j.Slf4j;
 import nacos.demo.feigns.UserClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,15 +24,20 @@ public class Controller {
     @Resource
     NamingService namingService;
 
-    @GetMapping("service")
-    public ListView<String> service(
+    @GetMapping("api/services")
+    public Object service(
         @RequestParam("page") int page,
         @RequestParam("perPage") int perPage
-    ) throws NacosException {
-        return namingService.getServicesOfServer(page, perPage);
+    ) {
+        String url = "http://console.nacos.io/nacos/v1/ns/catalog/services?hasIpCount=true&withInstances=false" +
+                "&pageNo=" + page + "&pageSize=" + perPage + "&serviceNameParam=&groupNameParam=&namespaceId=";
+
+        try (var response = HttpRequest.of(url).execute()) {
+            return response.body();
+        }
     }
 
-    @GetMapping("nodes")
+    @GetMapping("api/nodes")
     public List<Instance> nodes(
         @RequestParam("serviceName") String serviceName
     ) throws NacosException {
