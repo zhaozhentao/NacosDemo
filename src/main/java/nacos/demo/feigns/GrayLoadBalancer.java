@@ -1,4 +1,4 @@
-package nacos.demo;
+package nacos.demo.feigns;
 
 import com.alibaba.cloud.commons.lang.StringUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -47,13 +47,13 @@ public class GrayLoadBalancer implements ReactorServiceInstanceLoadBalancer {
     }
 
     public Mono<Response<ServiceInstance>> choose(Request request) {
-        ServiceInstanceListSupplier supplier = this.serviceInstanceListSupplierProvider.getIfAvailable(NoopServiceInstanceListSupplier::new);
+        ServiceInstanceListSupplier supplier = serviceInstanceListSupplierProvider.getIfAvailable(NoopServiceInstanceListSupplier::new);
 
-        return supplier.get(request).next().map((serviceInstances) -> this.processInstanceResponse(supplier, serviceInstances));
+        return supplier.get(request).next().map((serviceInstances) -> processInstanceResponse(supplier, serviceInstances));
     }
 
     private Response<ServiceInstance> processInstanceResponse(ServiceInstanceListSupplier supplier, List<ServiceInstance> serviceInstances) {
-        Response<ServiceInstance> serviceInstanceResponse = this.getInstanceResponse(serviceInstances);
+        Response<ServiceInstance> serviceInstanceResponse = getInstanceResponse(serviceInstances);
 
         if (supplier instanceof SelectedInstanceCallback && serviceInstanceResponse.hasServer()) {
             ((SelectedInstanceCallback) supplier).selectedServiceInstance(serviceInstanceResponse.getServer());
@@ -65,7 +65,7 @@ public class GrayLoadBalancer implements ReactorServiceInstanceLoadBalancer {
     private Response<ServiceInstance> getInstanceResponse(List<ServiceInstance> instances) {
         if (instances.isEmpty()) {
             if (log.isWarnEnabled()) {
-                log.warn("No servers available for service: " + this.serviceId);
+                log.warn("No servers available for service: " + serviceId);
             }
 
             return new EmptyResponse();
@@ -73,11 +73,13 @@ public class GrayLoadBalancer implements ReactorServiceInstanceLoadBalancer {
 
         String localMetadata = registration.getMetadata().get("who");
 
+        log.info("who {}", localMetadata);
+
         List<ServiceInstance> sameEnvInstances = instances.stream()
             .filter(i -> StringUtils.equals(i.getMetadata().get("who"), localMetadata))
             .collect(Collectors.toList());
 
-        int pos = this.position.incrementAndGet() & Integer.MAX_VALUE;
+        int pos = position.incrementAndGet() & Integer.MAX_VALUE;
 
         ServiceInstance instance = CollectionUtils.isEmpty(sameEnvInstances) ? instances.get(pos % instances.size()) :
             sameEnvInstances.get(pos % sameEnvInstances.size());
