@@ -22,6 +22,7 @@ dependencies {
 	implementation 'com.alibaba.cloud:spring-cloud-alibaba-dependencies:2021.0.4.0'
 	implementation 'com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-discovery:2021.0.4.0'
 	implementation 'com.alibaba.nacos:nacos-client:2.2.4'
+	implementation 'com.alibaba:transmittable-thread-local:2.14.3'
 
 	// 分布式事务,回滚时间字段需要的序列化工具
 //	implementation 'com.alibaba.cloud:spring-cloud-starter-alibaba-seata:2021.0.1.0'
