@@ -6,6 +6,7 @@ import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import lombok.extern.slf4j.Slf4j;
+import nacos.demo.interceptors.HttpContextUtil;
 import nacos.demo.feigns.UserClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -79,7 +80,7 @@ public class Controller {
 
     @GetMapping("/user")
     public String user() {
-        log.info("here");
+        log.info("header {}", HttpContextUtil.getHttpServletRequest().getHeader("PARK_CODE"));
         return "hao";
     }
 }
