@@ -1,9 +1,13 @@
 package nacos.demo.controller;
 
+import com.alibaba.nacos.api.config.ConfigService;
+import com.alibaba.nacos.api.exception.NacosException;
+import com.alibaba.nacos.api.naming.NamingFactory;
 import com.alibaba.nacos.api.naming.NamingService;
+import com.alibaba.nacos.api.naming.pojo.Instance;
+import com.alibaba.nacos.client.naming.NacosNamingService;
 import lombok.extern.slf4j.Slf4j;
 import nacos.demo.feigns.UserClient;
-import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,17 +29,21 @@ public class Controller {
     @Resource
     DiscoveryClient discoveryClient;
 
-    @Resource
-    NamingService namingService;
-
     @GetMapping("service")
     public List<String> service() {
         return discoveryClient.getServices();
     }
 
     @GetMapping("nodes")
-    public List<ServiceInstance> nodes() {
-        return discoveryClient.getInstances("zzt");
+    public List<Instance> nodes() throws NacosException {
+        NamingService namingService1 = NamingFactory.createNamingService("console.nacos.io");
+
+        return namingService1.getAllInstances("zzt");
+    }
+
+    @GetMapping("test")
+    public void test1() {
+
     }
 
     @GetMapping("/api/qw")
