@@ -6,4 +6,4 @@ spring:
     nacos:
       discovery:
         metadata:
-          who: zhaozhentao
+          gray: true

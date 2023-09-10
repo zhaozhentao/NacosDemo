@@ -22,8 +22,6 @@ public class TestController {
 
     @GetMapping("/api/qw")
     public Callable<String> test() {
-        log.info("before async");
-
         return () -> userClient.getUserById(false);
     }
 
