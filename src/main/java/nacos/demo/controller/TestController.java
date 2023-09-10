@@ -36,12 +36,6 @@ public class TestController {
 
     @GetMapping("/api/async_service")
     public String async() {
-        long current = System.currentTimeMillis();
-
-        log.info("current {}", current);
-
-        HeaderHolder.set("" + current);
-
         testService.asyncCall();
 
         return "haha";

@@ -73,11 +73,9 @@ public class GrayLoadBalancer implements ReactorServiceInstanceLoadBalancer {
 
         String localMetadata = registration.getMetadata().get("who");
 
-        log.info("who {}", localMetadata);
-
         List<ServiceInstance> sameEnvInstances = instances.stream()
             .filter(i -> StringUtils.equals(i.getMetadata().get("who"), localMetadata))
-            .collect(Collectors.toList());
+            .toList();
 
         int pos = position.incrementAndGet() & Integer.MAX_VALUE;
 
