@@ -3,7 +3,6 @@ package nacos.demo.controller;
 import lombok.extern.slf4j.Slf4j;
 import nacos.demo.feigns.UserClient;
 import nacos.demo.services.TestService;
-import nacos.demo.util.HeaderHolder;
 import nacos.demo.util.HttpContextUtil;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

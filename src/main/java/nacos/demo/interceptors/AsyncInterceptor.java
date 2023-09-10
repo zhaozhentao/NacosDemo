@@ -16,16 +16,12 @@ public class AsyncInterceptor implements AsyncHandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         HeaderHolder.set(request.getHeader("PARK_CODE"));
 
-        log.info("save header to ttl");
-
         return AsyncHandlerInterceptor.super.preHandle(request, response, handler);
     }
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         HeaderHolder.remove();
-
-        log.info("remove header from ttl");
 
         AsyncHandlerInterceptor.super.afterCompletion(request, response, handler, ex);
     }
