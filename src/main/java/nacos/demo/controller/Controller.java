@@ -49,27 +49,24 @@ public class Controller {
     ) throws NacosException {
         var instances = namingService.getAllInstances(serviceName);
 
-        for (var instance : instances) {
-            if (!ip.equals(instance.getIp()) || port != instance.getPort()) {
-                continue;
-            }
+        Instance instance = instances.stream()
+            .filter(i -> i.getIp().equals(ip) && port == i.getPort())
+            .findFirst()
+            .orElseThrow(() -> new RuntimeException("找不到实例"));
 
-            HttpRequest httpRequest = HttpRequest.of("http://console.nacos.io/nacos/v1/ns/instance");
-            httpRequest.setMethod(Method.PUT);
+        HttpRequest httpRequest = HttpRequest.of("http://console.nacos.io/nacos/v1/ns/instance");
+        httpRequest.setMethod(Method.PUT);
 
-            String body = "serviceName=" + instance.getServiceName()
-                + "&clusterName=" + instance.getClusterName()
-                + "&ip=" + instance.getIp()
-                + "&port=" + instance.getPort()
-                + "&weight=" + instance.getWeight()
-                + "&enabled=true"
-                + "&metadata=gray=false";
+        String body = "serviceName=" + instance.getServiceName()
+            + "&clusterName=" + instance.getClusterName()
+            + "&ip=" + instance.getIp()
+            + "&port=" + instance.getPort()
+            + "&weight=" + instance.getWeight()
+            + "&enabled=true"
+            + "&metadata=gray=false";
 
-            httpRequest.body(body);
-
-            try (var response = httpRequest.execute()) {
-                log.info("response {}", response.body());
-            }
+        try (var response = httpRequest.body(body).execute()) {
+            log.info("修改节点元数据返回: {}", response.body());
         }
     }
 }
