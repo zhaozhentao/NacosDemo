@@ -54,9 +54,6 @@ public class Controller {
             .findFirst()
             .orElseThrow(() -> new RuntimeException("找不到实例"));
 
-        HttpRequest httpRequest = HttpRequest.of("http://console.nacos.io/nacos/v1/ns/instance");
-        httpRequest.setMethod(Method.PUT);
-
         String body = "serviceName=" + instance.getServiceName()
             + "&clusterName=" + instance.getClusterName()
             + "&ip=" + instance.getIp()
@@ -65,7 +62,12 @@ public class Controller {
             + "&enabled=true"
             + "&metadata=gray=false";
 
-        try (var response = httpRequest.body(body).execute()) {
+        try (
+            var response = HttpRequest.of("http://console.nacos.io/nacos/v1/ns/instance")
+                .setMethod(Method.PUT)
+                .body(body)
+                .execute()
+        ) {
             log.info("修改节点元数据返回: {}", response.body());
         }
     }
