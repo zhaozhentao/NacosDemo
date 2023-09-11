@@ -102,18 +102,15 @@ public class Controller {
 
         var service = services.remove(0);
 
-        var client = applicationContext.getBean(Client.class);
-        var interceptor = applicationContext.getBean(FeignHeaderRequestInterceptor.class);
-
         var jsonConverter = new MappingJackson2HttpMessageConverter(new ObjectMapper());
         ObjectFactory<HttpMessageConverters> converter = () -> new HttpMessageConverters(jsonConverter);
 
         var traceClient = Feign.builder()
-            .client(client)
+            .client(applicationContext.getBean(Client.class))
             .contract(new SpringMvcContract())
             .encoder(new SpringEncoder(converter))
             .decoder(new SpringDecoder(converter))
-            .requestInterceptor(interceptor)
+            .requestInterceptor(applicationContext.getBean(FeignHeaderRequestInterceptor.class))
             .target(TraceClient.class, "http://" + service);
 
         return traceClient.trace(services);
