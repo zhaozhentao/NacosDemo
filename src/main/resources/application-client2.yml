@@ -8,4 +8,4 @@ spring:
     nacos:
       discovery:
         metadata:
-          who: zzt
+          gray: true

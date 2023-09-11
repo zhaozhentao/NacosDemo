@@ -19,7 +19,6 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 /**
  * 灰度发布负载均衡器
