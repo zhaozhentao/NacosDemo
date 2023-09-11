@@ -6,13 +6,9 @@ import cn.hutool.http.Method;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.Instance;
-import com.alibaba.nacos.shaded.com.google.gson.Gson;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.Client;
-import feign.Contract;
 import feign.Feign;
-import feign.codec.Decoder;
-import feign.codec.Encoder;
 import lombok.extern.slf4j.Slf4j;
 import nacos.demo.feigns.TraceClient;
 import nacos.demo.interceptors.FeignHeaderRequestInterceptor;
@@ -24,7 +20,6 @@ import org.springframework.cloud.openfeign.support.SpringDecoder;
 import org.springframework.cloud.openfeign.support.SpringEncoder;
 import org.springframework.cloud.openfeign.support.SpringMvcContract;
 import org.springframework.context.ApplicationContext;
-import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,9 +35,6 @@ public class Controller {
 
     @Resource
     Registration registration;
-
-    @Resource
-    LoadBalancerClient loadBalancerClient;
 
     @Resource
     ApplicationContext applicationContext;
@@ -100,8 +92,6 @@ public class Controller {
 
     @PostMapping("/api/trace")
     public void trace(@RequestBody List<String> services) {
-        log.info("services {}", services);
-
         if (CollUtil.isEmpty(services)) return;
 
         var service = services.remove(0);
@@ -109,8 +99,8 @@ public class Controller {
         var client = applicationContext.getBean(Client.class);
         var interceptor = applicationContext.getBean(FeignHeaderRequestInterceptor.class);
 
-        HttpMessageConverter jsonConverter = new MappingJackson2HttpMessageConverter(new ObjectMapper());
-        ObjectFactory<HttpMessageConverters> converter = ()-> new HttpMessageConverters(jsonConverter);
+        var jsonConverter = new MappingJackson2HttpMessageConverter(new ObjectMapper());
+        ObjectFactory<HttpMessageConverters> converter = () -> new HttpMessageConverters(jsonConverter);
 
         var traceClient = Feign.builder()
             .client(client)
