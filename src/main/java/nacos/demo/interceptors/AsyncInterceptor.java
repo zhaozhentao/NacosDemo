@@ -28,10 +28,11 @@ public class AsyncInterceptor implements AsyncHandlerInterceptor {
         HeaderHolder.set(parkCode);
 
         var traceInfo = request.getHeader("TRACE_INFO");
-        if (traceInfo != null) {
-            traceInfo += ";";
+        if (traceInfo == null || "null".equals(traceInfo)) {
+            traceInfo = "";
         }
-        traceInfo += service + ":" + registration.getMetadata().get("gray");
+
+        traceInfo += service + ":gray=" + registration.getMetadata().get("gray") + ";";
         TraceInfoHolder.set(traceInfo);
 
         return AsyncHandlerInterceptor.super.preHandle(request, response, handler);

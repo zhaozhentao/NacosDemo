@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import nacos.demo.feigns.TraceClient;
 import nacos.demo.interceptors.FeignHeaderRequestInterceptor;
 import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.cloud.client.serviceregistry.Registration;
 import org.springframework.cloud.openfeign.support.SpringDecoder;
@@ -23,11 +24,15 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Slf4j
 @RestController
 public class Controller {
+
+    @Value("${spring.application.name}")
+    String service;
 
     @Resource
     NamingService namingService;
@@ -90,8 +95,10 @@ public class Controller {
     }
 
     @PostMapping("/api/trace")
-    public void trace(@RequestBody List<String> services) {
-        if (CollUtil.isEmpty(services)) return;
+    public String trace(HttpServletRequest request, @RequestBody List<String> services) {
+        if (CollUtil.isEmpty(services)) {
+            return request.getHeader("TRACE_INFO") + service + ":gray=" + registration.getMetadata().get("gray");
+        }
 
         var service = services.remove(0);
 
@@ -109,6 +116,6 @@ public class Controller {
             .requestInterceptor(interceptor)
             .target(TraceClient.class, "http://" + service);
 
-        traceClient.trace(services);
+        return traceClient.trace(services);
     }
 }
