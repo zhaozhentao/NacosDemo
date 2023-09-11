@@ -26,7 +26,7 @@ public class Controller {
         @RequestParam("page") int page,
         @RequestParam("perPage") int perPage
     ) {
-        String url = "http://console.nacos.io/nacos/v1/ns/catalog/services?hasIpCount=true&withInstances=false" +
+        var url = "http://console.nacos.io/nacos/v1/ns/catalog/services?hasIpCount=true&withInstances=false" +
             "&pageNo=" + page + "&pageSize=" + perPage + "&serviceNameParam=&groupNameParam=&namespaceId=";
 
         try (var response = HttpRequest.of(url).execute()) {
@@ -49,12 +49,12 @@ public class Controller {
     ) throws NacosException {
         var instances = namingService.getAllInstances(serviceName);
 
-        Instance instance = instances.stream()
+        var instance = instances.stream()
             .filter(i -> i.getIp().equals(ip) && port == i.getPort())
             .findFirst()
             .orElseThrow(() -> new RuntimeException("找不到实例"));
 
-        String body = "serviceName=" + instance.getServiceName()
+        var body = "serviceName=" + instance.getServiceName()
             + "&clusterName=" + instance.getClusterName()
             + "&ip=" + instance.getIp()
             + "&port=" + instance.getPort()
