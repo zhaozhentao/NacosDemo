@@ -12,7 +12,7 @@ public class TestService {
     @Resource
     UserClient userClient;
 
-    @Async("myAsync")
+    @Async
     public void asyncCall() {
         userClient.getUserById(false);
     }

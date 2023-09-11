@@ -34,7 +34,6 @@ public class TestController {
     @GetMapping("/api/async_service")
     public String async() {
         testService.asyncCall();
-
         return "haha";
     }
 }

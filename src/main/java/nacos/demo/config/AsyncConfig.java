@@ -1,6 +1,5 @@
 package nacos.demo.config;
 
-import com.alibaba.ttl.threadpool.TtlExecutors;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -18,7 +17,7 @@ public class AsyncConfig {
         executor.setQueueCapacity(30);
         executor.setThreadNamePrefix("ok - ");
         executor.initialize();
-        return TtlExecutors.getTtlExecutor(executor);
+        return executor;
     }
 }
 
