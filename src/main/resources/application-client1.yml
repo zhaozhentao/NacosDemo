@@ -2,6 +2,8 @@ server:
   port: 8080
 
 spring:
+  application:
+    name: zzt1
   cloud:
     nacos:
       discovery:
