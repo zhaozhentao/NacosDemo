@@ -12,6 +12,7 @@ public class FeignHeaderRequestInterceptor implements RequestInterceptor {
 
     @Override
     public void apply(RequestTemplate requestTemplate) {
+        log.info("here");
         requestTemplate.header("PARK_CODE", HeaderHolder.get());
     }
 }
